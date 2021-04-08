@@ -1,0 +1,11 @@
+{
+	"dependencies": {
+	  "rollup": "latest",
+	  "rollup-plugin-commonjs": "latest",
+	  "rollup-plugin-node-resolve": "latest",
+	  "rollup-plugin-terser": "latest",
+	  "rollup-plugin-vue": "5.0.0",
+	  "@vue/compiler-sfc": "latest",
+	  "rollup-plugin-vue": "next"
+	}
+}

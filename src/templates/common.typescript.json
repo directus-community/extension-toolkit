@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w --preserveWatchOutput"
+  },
+  "dependencies": {
+    "directus": "latest",
+    "typescript": "latest"
+	}
+}
