@@ -1,5 +1,5 @@
 <template>
-  <div>My Custom Display</div>
+	<div>My Custom Display</div>
 </template>
 
 <script>

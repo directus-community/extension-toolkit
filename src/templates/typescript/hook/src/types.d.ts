@@ -1,7 +1,6 @@
-import { HookRegisterFunction } from 'directus/dist/types/extensions';
+import { HookRegisterFunction, ExtensionContext } from 'directus/dist/types/extensions';
 import { Accountability } from 'directus/dist/types/accountability';
 import { SchemaOverview } from 'directus/dist/types/schema';
-import { Knex } from 'knex';
 
 declare type Action = 'create' | 'update' | 'delete';
 
@@ -13,7 +12,7 @@ declare type EventHandlerArguments = {
 	action: Action;
 	payload: unknown;
 	schema: SchemaOverview;
-	database: Knex;
+	database: ExtensionContext['database'];
 };
 
 export { HookRegisterFunction, EventHandlerArguments };

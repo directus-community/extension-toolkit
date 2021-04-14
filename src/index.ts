@@ -17,13 +17,13 @@ const program = new commander.Command(pkg.name);
 program
 	.version(pkg.version)
 	.arguments('<type> <name>')
-	.option('-t, --typescript', 'Use TypeScript')
+	.option('-j, --javascript', 'Use Javascript')
 	.description('Create a new Directus project')
 	.action(create)
 	.parse(process.argv);
 
 async function create(type: string, name: string, options: { [key: string]: boolean }) {
-	const rootPath = path.resolve(name);
+	const targetPath = path.resolve(name);
 
 	if (!EXTENSION_TYPES.includes(type)) {
 		console.log(`Extension type "${chalk.red(type)}" does not exist.`);
@@ -32,15 +32,15 @@ async function create(type: string, name: string, options: { [key: string]: bool
 		process.exit(1);
 	}
 
-	if (await fse.pathExists(rootPath)) {
-		const stat = await fse.stat(rootPath);
+	if (await fse.pathExists(targetPath)) {
+		const stat = await fse.stat(targetPath);
 
 		if (stat.isDirectory() === false) {
 			console.log(`Destination ${chalk.red(name)} already exists and is not a directory.`);
 			process.exit(1);
 		}
 
-		const files = await fse.readdir(rootPath);
+		const files = await fse.readdir(targetPath);
 
 		if (files.length > 0) {
 			console.log(`Destination ${chalk.red(name)} already exists and is not an empty directory.`);
@@ -48,41 +48,70 @@ async function create(type: string, name: string, options: { [key: string]: bool
 		}
 	}
 
+	const projectLanguage = options.javascript ? 'javascript' : 'typescript';
+	const templatePath = `${TEMPLATE_ROOT}/${projectLanguage}/${type}`;
+
+	if (
+		!(await fse.pathExists(`${templatePath}/index.js`)) &&
+		!(await fse.pathExists(`${templatePath}/src/index.js`))
+	) {
+		console.log(`Bootstrapping ${chalk.red(type)}s in ${projectLanguage} is not yet supported.`);
+		console.log('Follow the development of this toolkit here:');
+		console.log('https://github.com/directus-community/extension-toolkit');
+		process.exit(1);
+	}
 	const spinner = ora(`Setting up ${type} boilerplate`).start();
+	await fse.ensureDir(targetPath);
 
-	const projectType = options.typescript ? 'typescript' : 'javascript';
-	const templatePath = `${TEMPLATE_ROOT}/${type}/${projectType}`;
-
-	await fse.ensureDir(rootPath);
-	await fse.copy(templatePath, rootPath, { filter: fileFilter }, (e) => e && console.error(e));
-	await fse.copy(
+	// Copy over files
+	fse.copy(templatePath, targetPath, { filter: fileFilter }, (e) => e && console.error(e));
+	fse.copy(
 		`${TEMPLATE_ROOT}/common`,
-		rootPath,
+		targetPath,
+		{ filter: fileFilter },
+		(e) => e && console.error(e),
+	);
+	fse.copy(
+		`${TEMPLATE_ROOT}/${projectLanguage}/common`,
+		targetPath,
 		{ filter: fileFilter },
 		(e) => e && console.error(e),
 	);
 
-	const common = await fse.readJSON(`${TEMPLATE_ROOT}/common.${projectType}.json`);
-	const templateLocation = `${templatePath}/package.json.template`;
-	let template;
-	if (await fse.pathExists(templateLocation)) {
-		template = await fse.readJSON(templateLocation);
+	// Parse package.json from common, unique and template files
+	const commonPackageJson = await fse.readJSON(
+		`${TEMPLATE_ROOT}/${projectLanguage}/common/package.json.template`,
+	);
+	const uniquePackageJsonPath = `${templatePath}/package.json.template`;
+	let templatePackageJson;
+	if (await fse.pathExists(uniquePackageJsonPath)) {
+		templatePackageJson = await fse.readJSON(uniquePackageJsonPath);
 	} else {
-		template = {};
+		templatePackageJson = {};
 	}
 
-	const packageTemplate = await fse.readFile(`${TEMPLATE_ROOT}/package.json.mustache`, 'utf-8');
+	const packageJsonTemplate = await fse.readFile(`${TEMPLATE_ROOT}/package.json.mustache`, 'utf-8');
 	const mustacheView = {
 		name,
 		type,
-		dependencies: JSON.stringify({ ...common.dependencies, ...(template.dependencies || {}) }),
-		scripts: JSON.stringify({ ...common.scripts, ...(template.scripts || {}) }),
+		dependencies: JSON.stringify({
+			...commonPackageJson.dependencies,
+			...(templatePackageJson.dependencies || {}),
+		}),
+		devDependencies: JSON.stringify({
+			...commonPackageJson.devDependencies,
+			...(templatePackageJson.devDependencies || {}),
+		}),
+		scripts: JSON.stringify({
+			...commonPackageJson.scripts,
+			...(templatePackageJson.scripts || {}),
+		}),
 	};
-	const renderedPackage = mustache.render(packageTemplate, mustacheView);
+	const renderedPackageJson = mustache.render(packageJsonTemplate, mustacheView);
 
-	fse.writeJSON(`${rootPath}/package.json`, JSON.parse(renderedPackage), { spaces: 2 });
+	fse.writeJSON(`${targetPath}/package.json`, JSON.parse(renderedPackageJson), { spaces: 2 });
 
-	await execa('npm', ['install'], { cwd: rootPath });
+	await execa('npm', ['install'], { cwd: targetPath });
 
 	spinner.stop();
 

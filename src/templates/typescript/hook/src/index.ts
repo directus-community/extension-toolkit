@@ -1,4 +1,5 @@
 import { HookRegisterFunction, EventHandlerArguments } from './types';
+import axios from 'axios';
 
 const registerHook: HookRegisterFunction = ({ services, exceptions }) => {
 	const { ServiceUnavailableException, ForbiddenException } = exceptions;
@@ -15,7 +16,9 @@ const registerHook: HookRegisterFunction = ({ services, exceptions }) => {
 			try {
 				await axios.post('https://example.com/recipes', input);
 			} catch (error) {
-				throw new ServiceUnavailableException(error);
+				throw new ServiceUnavailableException(error, {
+					service: 'my-custom-extension',
+				});
 			}
 
 			input[0].syncedWithExample = true;

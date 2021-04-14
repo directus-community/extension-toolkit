@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "axios": "^0.21.0",
+    "knex": "^0.95.3"
+  }
+}
