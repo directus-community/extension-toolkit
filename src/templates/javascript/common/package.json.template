@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "npx rollup -c"
+
   },
   "dependencies": {
 

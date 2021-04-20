@@ -1,5 +1,8 @@
 {
-	"dependencies": {
+  "scripts": {
+    "build": "npx rollup -c"
+  },
+  "dependencies": {
 		"rollup": "latest",
 		"rollup-plugin-commonjs": "latest",
 		"rollup-plugin-node-resolve": "latest",

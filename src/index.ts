@@ -10,7 +10,8 @@ import ora from 'ora';
 
 import * as pkg from '../package.json';
 
-const EXTENSION_TYPES = ['display', 'endpoint', 'hook', 'interface', 'layout', 'module'];
+const VUE_EXTENSIONS = ['display', 'interface', 'layout', 'module'];
+const EXTENSION_TYPES = ['endpoint', 'hook', ...VUE_EXTENSIONS];
 
 const TEMPLATE_ROOT = path.resolve(__dirname, '../../src/templates');
 
@@ -79,11 +80,20 @@ async function create(type: string, name: string, options: { [key: string]: bool
 		{ filter: fileFilter },
 		(e) => e && console.error(e),
 	);
+	if (VUE_EXTENSIONS.includes(type)) {
+		fse.copy(
+			`${TEMPLATE_ROOT}/${projectLanguage}/common.vue`,
+			targetPath,
+			{ filter: fileFilter },
+			(e) => e && console.error(e),
+		);
+	}
 
 	// Parse package.json from common, unique and template files
 	const commonPackageJson = await fse.readJSON(
 		`${TEMPLATE_ROOT}/${projectLanguage}/common/package.json.template`,
 	);
+
 	const uniquePackageJsonPath = `${templatePath}/package.json.template`;
 	let templatePackageJson;
 	if (await fse.pathExists(uniquePackageJsonPath)) {
@@ -92,25 +102,26 @@ async function create(type: string, name: string, options: { [key: string]: bool
 		templatePackageJson = {};
 	}
 
+	let vuePackageJson;
+	if (VUE_EXTENSIONS.includes(type)) {
+		vuePackageJson = await fse.readJSON(
+			`${TEMPLATE_ROOT}/${projectLanguage}/common.vue/package.json.template`,
+		);
+	} else {
+		vuePackageJson = {};
+	}
+
 	const packageJsonTemplate = await fse.readFile(`${TEMPLATE_ROOT}/package.json.mustache`, 'utf-8');
 	const mustacheView = {
 		name,
 		type,
-		dependencies: JSON.stringify({
-			...commonPackageJson.dependencies,
-			...(templatePackageJson.dependencies || {}),
-		}),
-		devDependencies: JSON.stringify({
-			...commonPackageJson.devDependencies,
-			...(templatePackageJson.devDependencies || {}),
-		}),
-		scripts: JSON.stringify({
-			...commonPackageJson.scripts,
-			...(templatePackageJson.scripts || {}),
-		}),
+		...stringifyTemplateObjects(
+			['dependencies', 'devDependencies', 'scripts'],
+			[commonPackageJson, templatePackageJson, vuePackageJson],
+		),
 	};
-	const renderedPackageJson = mustache.render(packageJsonTemplate, mustacheView);
 
+	const renderedPackageJson = mustache.render(packageJsonTemplate, mustacheView);
 	fse.writeJSON(`${targetPath}/package.json`, JSON.parse(renderedPackageJson), { spaces: 2 });
 
 	await execa('npm', ['install'], { cwd: targetPath });
@@ -121,6 +132,27 @@ async function create(type: string, name: string, options: { [key: string]: bool
 	process.exit(0);
 }
 
+/** Selects all files excluding those with `.template` suffix */
 function fileFilter(filename: string) {
 	return !filename.endsWith('template');
+}
+
+/**
+ * Merge templates of package.json into one object with string values,
+ * so that they can be passed to Mustache templating
+ */
+function stringifyTemplateObjects<T extends string>(
+	keys: T[],
+	templates: Record<T, Record<string, unknown>>[],
+) {
+	return Object.fromEntries(
+		keys.map((key) => [
+			key,
+			JSON.stringify(
+				templates
+					.map((template) => template[key] || {})
+					.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+			),
+		]),
+	);
 }
