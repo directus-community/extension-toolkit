@@ -26,10 +26,18 @@ program
 			'Type of the extension you wish to create.\n' +
 			'Has to be one of the following:\n' +
 			`${chalk.blue(EXTENSION_TYPES.join(', '))}`,
-		name: 'Name of your custom extension',
+		name: 'Name of your custom extension and the folder to be created',
 	})
-	.action(create)
-	.parse(process.argv);
+	.action(create);
+
+program.exitOverride((err) => {
+	if (err.code === 'commander.missingArgument') {
+		program.outputHelp();
+	}
+	process.exit(err.exitCode);
+});
+
+program.parse(process.argv);
 
 async function create(type: string, name: string, options: { [key: string]: boolean }) {
 	const targetPath = path.resolve(name);
