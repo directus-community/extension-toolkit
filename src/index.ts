@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import commander from 'commander';
 import path from 'path';
 import chalk from 'chalk';
