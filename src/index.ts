@@ -144,7 +144,8 @@ async function create(type: string, name: string, options: { [key: string]: bool
 
 	console.log(`Extension set up successfully! Start your development with "cd ${name}"`);
 	console.log('Also be sure to check out the relevant documentation:');
-	console.log(`https://docs.directus.io/guides/${type}s/`);
+	const documentationSlug = VUE_EXTENSIONS.includes(type) ? type : `api-${type}`;
+	console.log(`https://docs.directus.io/guides/${documentationSlug}s/`);
 	process.exit(0);
 }
 
