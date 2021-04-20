@@ -10,6 +10,9 @@
   "scripts": {
     "build": "tsc"
   },
+  "release": {
+    "branches": [ "main" ]
+  },
   "keywords": [
     "directus",
     "extension"
