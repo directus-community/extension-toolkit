@@ -54,8 +54,8 @@ async function create(type: string, name: string, options: { [key: string]: bool
 	const templatePath = `${TEMPLATE_ROOT}/${projectLanguage}/${type}`;
 
 	if (
-		!(await fse.pathExists(`${templatePath}/index.js`)) &&
-		!(await fse.pathExists(`${templatePath}/src/index.js`))
+		!(await fse.pathExists(`${templatePath}/index.${projectLanguage.charAt(0)}s`)) &&
+		!(await fse.pathExists(`${templatePath}/src/index.${projectLanguage.charAt(0)}s`))
 	) {
 		console.log(`Bootstrapping ${chalk.red(type)}s in ${projectLanguage} is not yet supported.`);
 		console.log('Follow the development of this toolkit here:');
