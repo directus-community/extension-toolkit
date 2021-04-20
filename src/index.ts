@@ -129,6 +129,8 @@ async function create(type: string, name: string, options: { [key: string]: bool
 	spinner.stop();
 
 	console.log(`Extension set up successfully! Start your development with "cd ${name}"`);
+	console.log('Also be sure to check out the relevant documentation:');
+	console.log(`https://docs.directus.io/guides/${type}s/`);
 	process.exit(0);
 }
 
