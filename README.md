@@ -11,7 +11,7 @@ npx create-directus-extension interface my-interface
 ```
 
 ```bash
-yarn create-directus-extension display my-display
+yarn create directus-extension display my-display
 ```
 
 ## Usage
