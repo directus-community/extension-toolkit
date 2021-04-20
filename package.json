@@ -9,7 +9,8 @@
     "src/templates"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prepack": "npm run build"
   },
   "release": {
     "branches": [
