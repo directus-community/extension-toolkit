@@ -11,7 +11,7 @@ import ora from 'ora';
 import * as pkg from '../package.json';
 
 const VUE_EXTENSIONS = ['display', 'interface', 'layout', 'module'];
-const EXTENSION_TYPES = ['endpoint', 'hook', ...VUE_EXTENSIONS];
+const EXTENSION_TYPES = [...VUE_EXTENSIONS, 'endpoint', 'hook'];
 
 const TEMPLATE_ROOT = path.resolve(__dirname, '../../src/templates');
 
@@ -20,8 +20,14 @@ const program = new commander.Command(pkg.name);
 program
 	.version(pkg.version)
 	.arguments('<type> <name>')
-	.option('-j, --javascript', 'Use Javascript')
-	.description('Create a new Directus project')
+	.option('-j, --javascript', 'Use Javascript instead of Typescript')
+	.description('Create a new Directus extension', {
+		type:
+			'Type of the extension you wish to create.\n' +
+			'Has to be one of the following:\n' +
+			`${chalk.blue(EXTENSION_TYPES.join(', '))}`,
+		name: 'Name of your custom extension',
+	})
 	.action(create)
 	.parse(process.argv);
 
