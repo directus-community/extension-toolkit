@@ -1,6 +1,6 @@
 {
   "name": "create-directus-extension",
-  "version": "0.0.1",
+  "version": "1.0.4",
   "description": "Command line toolkit to help users bootstrap custom Directus extensions",
   "main": "dist/src/index.js",
   "bin": "./dist/src/index.js",
@@ -20,10 +20,15 @@
       "@semantic-release/release-notes-generator",
       "@semantic-release/npm",
       "@semantic-release/github",
-      ["@semantic-release/git", {
-        "assets": ["package.json"],
-        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-      }]
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
     ]
   },
   "keywords": [
