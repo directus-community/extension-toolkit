@@ -5,7 +5,8 @@
   "main": "dist/src/index.js",
   "bin": "./dist/src/index.js",
   "files": [
-    "dist"
+    "dist",
+    "src/templates"
   ],
   "scripts": {
     "build": "tsc"
