@@ -3,12 +3,11 @@
     "build": "npx rollup -c"
   },
   "dependencies": {
-		"rollup": "latest",
-		"rollup-plugin-commonjs": "latest",
-		"rollup-plugin-node-resolve": "latest",
-		"rollup-plugin-terser": "latest",
-		"rollup-plugin-vue": "5.0.0",
-		"@vue/compiler-sfc": "latest",
-		"rollup-plugin-vue": "next"
+    "@rollup/plugin-commonjs": "18.x",
+    "@rollup/plugin-node-resolve": "11.x",
+    "rollup": "2.x",
+    "rollup-plugin-terser": "7.x",
+    "rollup-plugin-vue": "5.x",
+    "vue-template-compiler": "2.x"
 	}
 }

@@ -1,7 +1,11 @@
 <template>
-	<div>My Custom Display</div>
+	<div>Value: {{ value }}</div>
 </template>
 
 <script>
-export default {};
+export default {
+	props: {
+		value: String,
+	},
+};
 </script>
