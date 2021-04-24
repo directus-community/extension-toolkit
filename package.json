@@ -1,6 +1,6 @@
 {
   "name": "create-directus-extension",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Command line toolkit to help users bootstrap custom Directus extensions",
   "main": "dist/src/index.js",
   "bin": "./dist/src/index.js",
