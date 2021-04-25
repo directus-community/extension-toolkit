@@ -2,13 +2,15 @@
   "scripts": {
     "build": "npx rollup -c"
   },
-  "dependencies": {
-		"rollup": "latest",
-		"rollup-plugin-commonjs": "latest",
-		"rollup-plugin-node-resolve": "latest",
-		"rollup-plugin-terser": "latest",
-		"rollup-plugin-vue": "5.0.0",
-		"@vue/compiler-sfc": "latest",
-		"rollup-plugin-vue": "next"
-	}
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "18.x",
+    "@rollup/plugin-node-resolve": "11.x",
+    "@vue/cli-plugin-typescript": "^4.5.8",
+    "@vue/cli-service": "^4.5.8",
+    "@vue/composition-api": "^0.6.7",
+    "rollup": "2.x",
+    "rollup-plugin-terser": "7.x",
+    "rollup-plugin-vue": "5.x",
+    "vue-template-compiler": "2.x"
+  }
 }

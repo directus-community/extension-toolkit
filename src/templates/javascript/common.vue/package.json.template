@@ -2,7 +2,7 @@
   "scripts": {
     "build": "npx rollup -c"
   },
-  "dependencies": {
+  "devDependencies": {
     "@rollup/plugin-commonjs": "18.x",
     "@rollup/plugin-node-resolve": "11.x",
     "rollup": "2.x",
